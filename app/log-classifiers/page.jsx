@@ -40,23 +40,26 @@ export default function LogsClassifiers() {
   ];
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+  event.preventDefault();
 
-    if (!classifiers?.classifiers || classifiers.classifiers.length === 0) {
-      setError("No Classifiers found for the provided Log ID.");
-      setRows([]);
-    } else {
-      setError("");
-      const rows = classifiers.classifiers.map((classifier) => ({
-        id: classifier.id,
-        logId: classifiers.id,
-        classifierId: classifier.id,
-        name: classifier.name,
-        keys: classifier.attr_keys.join(", "),
-      }));
-      setRows(rows);
-    }
-  };
+  if (!classifiers || classifiers.length === 0 || !classifiers[0].classifiers) {
+    setError("No Classifiers found for the provided Log ID.");
+    setRows([]);
+    return;
+  }
+
+  const log = classifiers[0];
+  const rows = log.classifiers.map((classifier) => ({
+    id: classifier.id,
+    logId: log.id,
+    classifierId: classifier.id,
+    name: classifier.name,
+    keys: classifier.attr_keys.join(", "),
+  }));
+
+  setError("");
+  setRows(rows);
+};
 
   return (
     <>

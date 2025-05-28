@@ -10,7 +10,8 @@ export default function LogsAttributes() {
   const [rows, setRows] = useState([]);
   const [error, setError] = useState("");
 
-  const { data: attributes, isFetching } = useGetLogWithAttributesQuery(logId);
+const { data: logData, isFetching } = useGetLogWithAttributesQuery(logId);
+
 
   // columns of table
   const columns = [
@@ -64,28 +65,33 @@ export default function LogsAttributes() {
     },
   ];
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+const handleSubmit = (event) => {
+  event.preventDefault();
 
-    if (!attributes?.attributes?.length) {
-      setError("No Attributes found for the provided Log ID.");
-      setRows([]);
-    } else {
-      setError("");
-      const rows = attributes.attributes.map((attribute) => ({
-        id: attribute.id,
-        attributeKey: attribute.attr_key,
-        attributeType: attribute.attr_type,
-        value: attribute.log_has_attribute.value,
-        traceScope: attribute.log_has_attribute.trace_global,
-        eventScope: attribute.log_has_attribute.event_global,
-        parentId: attribute.log_has_attribute.parent_id,
-        prefix: attribute?.extension?.prefix,
-      }));
+  const log = logData?.[0]; // get the first log object
 
-      setRows(rows);
-    }
-  };
+  if (!log || !log.attributes || log.attributes.length === 0) {
+    setError("No Attributes found for the provided Log ID.");
+    setRows([]);
+    return;
+  }
+
+  setError("");
+
+  const rows = log.attributes.map((attribute) => ({
+    id: attribute.id,
+    attributeKey: attribute.attr_key,
+    attributeType: attribute.attr_type,
+    value: attribute.log_has_attribute.value,
+    traceScope: Boolean(attribute.log_has_attribute.trace_global),
+    eventScope: Boolean(attribute.log_has_attribute.event_global),
+    parentId: attribute.parent_id,
+    prefix: attribute?.extension?.prefix,
+  }));
+
+  setRows(rows);
+};
+
 
   return (
     <>
@@ -109,7 +115,7 @@ export default function LogsAttributes() {
             />
             <Typography variant="body1" component="h6">
               Log's total global attribute:{" "}
-              {attributes?.attributes ? attributes.attributes.length : "-"}
+              {logData?.[0]?.attributes?.length ?? "-"}
             </Typography>
           </Box>
 

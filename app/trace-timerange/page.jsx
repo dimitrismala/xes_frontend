@@ -46,10 +46,6 @@ export default function TracesTimeRange() {
       headerName: "time:timestamp",
       width: 200,
       type: "string",
-      valueFormatter: (params) =>
-        params.value
-          ? dayjs(params.value).format("YYYY-MM-DD HH:mm:ss")
-          : "-", // fallback
     },
   ];
 

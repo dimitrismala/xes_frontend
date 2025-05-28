@@ -41,11 +41,6 @@ export default function EventsTimeRange() {
       headerName: "time:timestamp",
       width: 200,
       type: "string",
-      valueFormatter: (params) => {
-        return params.value
-          ? dayjs(params.value).format("YYYY-MM-DD HH:mm:ss")
-          : "-"; // Fallback for missing or invalid timestamps
-      },
     },
   ];
 
